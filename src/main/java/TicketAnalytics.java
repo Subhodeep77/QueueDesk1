@@ -2,6 +2,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
 public final class TicketAnalytics {
@@ -47,6 +48,16 @@ public final class TicketAnalytics {
         return tickets.stream()
                 .filter(ticket -> ticket.getStatus() == Ticket.Status.OPEN)
                 .min(Comparator.comparing(Ticket::getCreatedAt));
+    }
+
+    public static String tagLine(List<Ticket> tickets) {
+        if(tickets == null) throw new IllegalArgumentException("Ticket list cannot be null.");
+        return tickets.stream()
+               .map(Ticket::getTags)
+               .flatMap(tags -> tags.stream())
+               .distinct()
+               .sorted()
+               .collect(Collectors.joining(", "));
     }
 
 }
