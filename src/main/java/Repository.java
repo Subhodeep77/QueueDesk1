@@ -3,6 +3,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 public class Repository<T extends Ticket> {
     private final List<T> tickets = new ArrayList<>();
@@ -25,7 +26,16 @@ public class Repository<T extends Ticket> {
             if (t.getId() == id)
                 return t;
         }
-        throw new TicketNotFoundException("Ticket not found.");
+        throw new TicketNotFoundException("Ticket not found having id: " + id + ".");
+    }
+
+    public Optional<Ticket> findByIdSafe(int id) {
+        if (id <= 0)
+            throw new IllegalArgumentException("invalid id.");
+        return tickets.stream()
+            .filter(ticket -> ticket.getId() == id)
+            .map(ticket -> (Ticket) ticket)
+            .findFirst();
     }
 
     public Map<String, List<T>> groupByAssignee() {
